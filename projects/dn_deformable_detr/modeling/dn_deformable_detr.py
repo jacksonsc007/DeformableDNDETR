@@ -110,6 +110,8 @@ class DNDeformableDETR(nn.Module):
         self.denoising_groups = denoising_groups
         self.label_noise_prob = label_noise_prob
         self.box_noise_scale = box_noise_scale
+        
+        self.transformer.num_matching_queries = num_queries
 
         if not as_two_stage:
             if self.with_indicator:

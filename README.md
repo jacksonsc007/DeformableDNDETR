@@ -4,3 +4,6 @@ This repo is exclusively used for Deformable DNDETR. If you want to run other pr
 Branch Name: sparse_token
 
 # v1
+
+## v1.1
+Eliminate matching queries when calculating attn map.

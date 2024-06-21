@@ -492,6 +492,10 @@ class DNDeformableDetrTransformer(nn.Module):
             
             sampling_locations = torch.stack(sampling_locations, dim=1)
             attn_weights = torch.stack(attn_weights, dim=1)
+            matching_q_num = self.num_matching_queries
+            # eliminate noised queries
+            sampling_locations = sampling_locations[:, :, -matching_q_num:]
+            attn_weights = attn_weights[:, :, -matching_q_num:]
             attn_map = attn_map_to_flat_grid(spatial_shapes, level_start_index, sampling_locations, attn_weights).sum(dim=(1,2))
         inter_states = torch.stack(inter_states)
         inter_references = torch.stack(inter_references)
