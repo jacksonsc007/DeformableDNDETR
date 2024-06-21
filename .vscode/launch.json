@@ -1,0 +1,29 @@
+{
+    // Use IntelliSense to learn about possible attributes.
+    // Hover to view descriptions of existing attributes.
+    // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "detrex pipeline",
+            "type": "python",
+            "request": "launch",
+            "program": "tools/train_net.py",
+            "console": "integratedTerminal",
+            "justMyCode": true,
+            "cwd":"/root/workspace/Deformable-DN-DETR",
+            "env": {"code_version":"debug"},
+            "args": [
+                // "--config-file", "projects/dn_deformable_detr/configs/dn_deformable_detr_r50_12ep_cocominitrain.py", 
+                // "--config-file", "projects/dn_deformable_detr/configs/dn_deformable_detr_r18_12ep_cocominitrain.py", 
+                "--config-file", "projects/dn_deformable_detr/configs/shortersize480_dn_deformable_detr_r18_12ep_cocominitrain.py",
+                "dataloader.train.total_batch_size=2",
+                "train.wandb.enabled=False",
+                "train.output_dir='output/tmp'",
+                // "train.device=cpu",
+                // "model.device=cpu",
+                // "train.init_checkpoint='/root/workspace/detrex/output/model_0016719.pth'"
+            ]
+        }
+    ]
+}
