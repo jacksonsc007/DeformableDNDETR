@@ -39,7 +39,7 @@ model.transformer.encoder.num_layers=6
 model.transformer.decoder.num_layers=6 
 model.num_queries = 300
 
-model_code = f"DeformableDNDETR_q{model.num_queries}_enc{model.transformer.encoder.num_layers}_dec{model.transformer.decoder.num_layers}"
+model_code = f"DeformableDNDETR_r18_q{model.num_queries}_enc{model.transformer.encoder.num_layers}_dec{model.transformer.decoder.num_layers}"
 
 # ========================================
 # optimizer config
