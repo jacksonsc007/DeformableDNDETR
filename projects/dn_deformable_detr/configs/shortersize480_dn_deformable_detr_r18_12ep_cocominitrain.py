@@ -26,7 +26,7 @@ dataloader.train.total_batch_size = batch_size
 dataloader.train.num_workers = 8
 
 
-dataset_code = "coco_minitrain"
+dataset_code = "shortersize480_coco_minitrain"
 
 
 # ========================================
@@ -39,7 +39,7 @@ model.transformer.encoder.num_layers=6
 model.transformer.decoder.num_layers=6 
 model.num_queries = 300
 
-model_code = f"DNDETR_num_queries{model.num_queries}_enc{model.transformer.encoder.num_layers}_dec{model.transformer.decoder.num_layers}"
+model_code = f"DeformableDNDETR_q{model.num_queries}_enc{model.transformer.encoder.num_layers}_dec{model.transformer.decoder.num_layers}"
 
 # ========================================
 # optimizer config
