@@ -360,7 +360,7 @@ class MultiScaleDeformableAttention(nn.Module):
         if not self.batch_first:
             output = output.permute(1, 0, 2)
 
-        return self.dropout(output) + identity
+        return self.dropout(output) + identity, sampling_locations, attention_weights
 
 
 def create_dummy_class(klass, dependency, message=""):

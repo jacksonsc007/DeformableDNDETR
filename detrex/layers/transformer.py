@@ -57,10 +57,10 @@ class BaseTransformerLayer(nn.Module):
         operation_order: tuple = None,
     ):
         super(BaseTransformerLayer, self).__init__()
-        assert set(operation_order).issubset({"self_attn", "norm", "cross_attn", "ffn"})
+        assert set(operation_order).issubset({"sparse_self_attn", "self_attn", "norm", "cross_attn", "ffn"})
 
         # count attention nums
-        num_attn = operation_order.count("self_attn") + operation_order.count("cross_attn")
+        num_attn = operation_order.count("sparse_self_attn") + operation_order.count("self_attn") + operation_order.count("cross_attn")
 
         if isinstance(attn, nn.Module):
             attn = [copy.deepcopy(attn) for _ in range(num_attn)]
@@ -77,7 +77,7 @@ class BaseTransformerLayer(nn.Module):
         self.attentions = nn.ModuleList()
         index = 0
         for operation_name in operation_order:
-            if operation_name in ["self_attn", "cross_attn"]:
+            if operation_name in ["sparse_self_attn", "self_attn", "cross_attn"]:
                 self.attentions.append(attn[index])
                 index += 1
 
@@ -148,11 +148,12 @@ class BaseTransformerLayer(nn.Module):
                 f"to the number of attention in "
                 f"operation_order {self.num_attn}"
             )
-
+        sampling_locations = None
+        attn_weights = None
         for layer in self.operation_order:
             if layer == "self_attn":
                 temp_key = temp_value = query
-                query = self.attentions[attn_index](
+                query, _, _= self.attentions[attn_index](
                     query,
                     temp_key,
                     temp_value,
@@ -166,12 +167,26 @@ class BaseTransformerLayer(nn.Module):
                 attn_index += 1
                 identity = query
 
+            elif layer == "sparse_self_attn":
+                query, _, _= self.attentions[attn_index](
+                    query,
+                    key,
+                    value,
+                    identity if self.pre_norm else None,
+                    query_pos=query_pos,
+                    key_pos=query_pos,
+                    attn_mask=attn_masks[attn_index],
+                    key_padding_mask=query_key_padding_mask,
+                    **kwargs,
+                )
+                attn_index += 1
+                identity = query
             elif layer == "norm":
                 query = self.norms[norm_index](query)
                 norm_index += 1
 
             elif layer == "cross_attn":
-                query = self.attentions[attn_index](
+                query, sampling_locations, attn_weights = self.attentions[attn_index](
                     query,
                     key,
                     value,
@@ -189,7 +204,7 @@ class BaseTransformerLayer(nn.Module):
                 query = self.ffns[ffn_index](query, identity if self.pre_norm else None)
                 ffn_index += 1
 
-        return query
+        return query, sampling_locations, attn_weights
 
 
 class TransformerLayerSequence(nn.Module):
